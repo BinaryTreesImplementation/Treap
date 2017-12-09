@@ -17,14 +17,14 @@ TEST_CASE("Inserting left child", "[ilch]") {
    Treap<int> testTreap;
    testTreap.Insert(10);
    testTreap.Insert(7);
-   REQUIRE(*testTreap.getKeyRoot() == 7);
-   REQUIRE(testTreap.getLeftKey(7) == nullptr);
-   REQUIRE(*testTreap.getRightKey(7) == 10);
+   int root = 7;
+   if(*testTreap.getPriority(7) < *testTreap.getPriority(10))
+       root = 10;
+   REQUIRE(*testTreap.getKeyRoot() == root);
    REQUIRE(testTreap.getCount() == 2);
    REQUIRE(testTreap.getRoot() != 0);
-   REQUIRE(testTreap.getLeftKey(10) == nullptr);
-   REQUIRE(testTreap.getRightKey(10) == nullptr);
-   REQUIRE(*testTreap.getPriority(10) > *testTreap.getPriority(7)); 
+   REQUIRE(testTreap.Search(7) != nullptr);
+   REQUIRE(testTreap.Search(10) != nullptr);
 }
 
 
@@ -86,12 +86,9 @@ TEST_CASE("Inserting", "[irch]") {
 	testTreap.Insert(10);
 	testTreap.Insert(11);
 	testTreap.Remove(10);
-	int root = 11;
-	if(*testTreap.getPriority(11) < *testTreap.getPriority(10))
-		root = 10;
-	REQUIRE(*testTreap.getKeyRoot() == root);
-	REQUIRE(testTreap.getRightKey(root) == nullptr);
-	REQUIRE(testTreap.getLeftKey(root) == nullptr);
+	REQUIRE(*testTreap.getKeyRoot() == 11);
+	REQUIRE(testTreap.getRightKey(11) == nullptr);
+	REQUIRE(testTreap.getLeftKey(11) == nullptr);
 	REQUIRE(testTreap.getRoot() != nullptr);
 	REQUIRE(testTreap.getCount() == 1);
 }
