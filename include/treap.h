@@ -126,7 +126,7 @@ public:
 
 	void Remove(const T& value)
 	{
-		if (search(value) != nullptr)
+		if (Search(value) != nullptr)
 		{
 			NodePair splited = Split(value, root);
 			Node *removing = splited.second;

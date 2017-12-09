@@ -5,7 +5,7 @@
 TEST_CASE("insert_root", "[root]") {
    Treap<int> testTreap;
    testTreap.Insert(10);
-   REQUIRE(testTreap.getKeyRoot() == 10);
+   REQUIRE(*testTreap.getKeyRoot() == 10);
    REQUIRE(testTreap.getLeftKey(10) == nullptr);
    REQUIRE(testTreap.getRightKey(10) == nullptr);
    REQUIRE(testTreap.getCount() == 1);
