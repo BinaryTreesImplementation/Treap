@@ -16,26 +16,34 @@ private:
 
 
 	} *root;
+	size_t count;
+	void deleteNode_(Node* temp)
+	{
+		if (!temp)
+			return;
+		if (temp->left)
+		{
+			deleteNode_(temp->left);
+			temp->left = nullptr;
+		}
+
+		if (temp->right)
+		{
+			deleteNode_(temp->right);
+			temp->right = nullptr;
+		}
+		delete temp;
+	}
+
 public:
-	Treap() : root(nullptr) {}
-
-	Node *getRoot()const
-	{
-		return root;
-	}
-
-	T getKey(Node *_node)const
-	{
-		return _node->key;
-	}
-	int getPriority(Node *_node)const
-	{
-		return _node->priority;
-	}
-
 	typedef std::pair<Node *, Node *> NodePair;
 
-	NodePair split(const T& value, Node *localRoot)
+	Treap() : root(nullptr), count(0){}
+	
+	~Treap()
+	{ deleteNode_(root); }
+
+	NodePair Split(const T& value, Node *localRoot)
 	{
 		if (!localRoot)
 		{
@@ -44,66 +52,60 @@ public:
 
 		else if (value > localRoot->key)
 		{
-			NodePair splited = split(value, localRoot->right);
+			NodePair splited = Split(value, localRoot->right);
 			localRoot->right = splited.first;
 			return NodePair(localRoot, splited.second);
 		}
 		else
 		{
-			NodePair splited = split(value, localRoot->left);
+			NodePair splited = Split(value, localRoot->left);
 			localRoot->left = splited.second;
 			return NodePair(splited.first, localRoot);
 		}
 	}
 
-	void display(const Node* temp, unsigned int level)const
+	void Display(const Node* temp, unsigned int level)const
 	{
 		if (temp)
 		{
-			display(temp->left, level + 1);
+			Display(temp->left, level + 1);
 			for (int i = 0; i < level; i++)
 				std::cout << "__";
 			std::cout << temp->key << "\t" << temp <<"\n";
-			display(temp->right, level + 1);
+			Display(temp->right, level + 1);
 		}
 	}
 
 
-	Node *merge(Node *Left, Node *Right)
+	Node *Merge(Node *Left, Node *Right)
 	{
 		if (!Right)
-		{
 			return Left;
-		}
-
 		if (!Left)
-		{
 			return Right;
-		}
-
 		if (Left->priority > Right->priority)
 		{
-			Left->right = merge(Left->right, Right);
+			Left->right = Merge(Left->right, Right);
 			return Left;
 		}
-
 		else
 		{
-			Right->left = merge(Left, Right->left);
+			Right->left = Merge(Left, Right->left);
 			return Right;
 		}
 	}
 
-	void insert(const T& value)
+	void Insert(const T& value)
 	{
-		NodePair splited = split(value, root);
+		NodePair splited = Split(value, root);
 		Node *inserting = new Node(value, rand()%100);
-		splited.first = merge(splited.first, inserting);
-		root = merge(splited.first, splited.second);
-
+		splited.first = Merge(splited.first, inserting);
+		root = Merge(splited.first, splited.second);
+		++count;
 	}
 
-	Node *search(const T& value)
+	
+	Node *Search(const T& value)const
 	{
 		Node *searchedElement = root;
 
@@ -122,24 +124,81 @@ public:
 		return nullptr;
 	}
 
-	void remove(const T& value)
+	void Remove(const T& value)
 	{
+		if (search(value) != nullptr)
+		{
+			NodePair splited = Split(value, root);
+			Node *removing = splited.second;
+			Node *preRemoving = nullptr;
+			while (removing->left != nullptr)
+			{
+				preRemoving = removing;
+				removing = removing->left;
+			}
 
-		Node *removing = search(value);
-		
-		
-		std::cout << "=======\n";
-		std::cout << merge(removing->left, removing->right)->key;
-		std::cout << "=======\n";
-		std::cout << removing;
-		std::cout << "=======\n";
-		removing = merge(removing->left, removing->right);
-		std::cout << "=======\n";
-		std::cout << removing->key;
-		std::cout << "=======\n";
-		std::cout << removing;
-		std::cout << "=======\n";
-		
-		
+			if (removing == root)
+				splited.second = removing->right;
+			Node * nextRemoving = removing->right;
+			delete removing;
+
+			if (preRemoving != nullptr)
+				preRemoving->left = nextRemoving;
+			root = Merge(splited.first, splited.second);
+			--count;
+		}
+	}
+
+	int* getPriority(const T&  value)const
+	{
+		Node *searchedNode = Search(value);
+		if (searchedNode)
+			return new int(searchedNode->priority);
+		return nullptr;
+	}
+
+	Node *getRoot()const
+	{
+		return root;
+	}
+
+	T* getKey(const T& value)const
+	{
+		Node *node = Search(value);
+		if (node != nullptr)
+			return new T(node->key);
+		else
+			return nullptr;
+	}
+
+	T* getRightKey(const T& key)
+	{
+		Node *node = Search(key);
+		if (node != nullptr && node->right != nullptr)
+			return new T(node->right->key);
+		else
+			return nullptr;
+	}
+
+	T* getKeyRoot()
+	{
+		if (root)
+			return new T(root->key);
+		else
+			return nullptr;
+	}
+	
+	T* getLeftKey(const T& key)
+	{
+		Node *node = Search(key);
+		if (node != nullptr && node->left != nullptr)
+			return new T(node->left->key);
+		else
+			return nullptr;
+	}
+
+	size_t getCount()
+	{
+		return count;
 	}
 };
