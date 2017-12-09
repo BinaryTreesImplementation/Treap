@@ -42,7 +42,7 @@ TEST_CASE("Inserting right child", "[irch]") {
    REQUIRE(testTreap.getRightKey(10) == nullptr);
 }
 
-TEST_CASE("Inserting right child", "[irch]") {
+TEST_CASE("Inserting", "[irch]") {
 	Treap<int> testTreap;
 	testTreap.Insert(10);
 	testTreap.Insert(75);
