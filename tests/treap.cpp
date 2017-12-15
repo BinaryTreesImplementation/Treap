@@ -2,6 +2,10 @@
 
 #include "treap.h"
 
+/*
+    nullptr     ->      10
+*/
+
 TEST_CASE("insert_root", "[root]") {
    Treap<int> testTreap;
    testTreap.Insert(10);
@@ -12,7 +16,16 @@ TEST_CASE("insert_root", "[root]") {
    REQUIRE(testTreap.getRoot() != 0);
 }
 
-
+/*
+if "10" priority > "7" priority
+    10     ->      10		
+                  /  	
+                 7
+else 
+    10     ->       7
+    		     \
+		      10
+*/
 TEST_CASE("Inserting left child", "[ilch]") {
    Treap<int> testTreap;
    testTreap.Insert(10);
@@ -27,7 +40,16 @@ TEST_CASE("Inserting left child", "[ilch]") {
    REQUIRE(testTreap.Search(10) != nullptr);
 }
 
-
+/*
+if "10" priority > "75" priority
+    10     ->      10		
+                     \ 	
+                      75
+else 
+    10     ->       75
+    		   /
+		  10
+*/
 TEST_CASE("Inserting right child", "[irch]") {
    Treap<int> testTreap;
    testTreap.Insert(10);
@@ -41,7 +63,56 @@ TEST_CASE("Inserting right child", "[irch]") {
    REQUIRE(testTreap.getLeftKey(10) == nullptr);
    REQUIRE(testTreap.getRightKey(10) == nullptr);
 }
-
+/*
+if "10" priority > "25" priority > "75" priority
+    10     ->      10	   ->     10	
+                     \ 	            \
+                      75             25
+                                       \
+		                        75  
+if "25" priority < "75" priority < "10" priority 
+    10     ->      10	   ->     10	
+                     \ 	            \
+                      75             75
+                                    /  
+		                   25
+if "10" priority < "25" priority < "75" priority
+    10     ->      75	   ->     75	
+                   /   	          /
+                  10             25   
+                                /     
+		               10     
+if "10" priority < "75" priority < "25" priority
+    10     ->      75	   ->     25	
+                   / 	           \	
+                  10                75
+                                   /     
+		                 10 
+if "75" priority < "10" priority < "25" priority
+    10     ->      10	   ->     25	
+                     \ 	           \	
+                      75            75
+                                   /     
+		                 10 
+if "75" priority < "10" priority < "25" priority
+    10     ->      10	   ->     25	
+                     \ 	          /	
+                      75         10
+                                  \     
+		                   75
+if "25" priority < "10" priority < "75" priority
+    10     ->      75	   ->      75	
+                   / 	          /	
+                  10             10
+                                  \   
+		                   25 
+if "10" priority < "25" priority < "75" priority
+    10     ->      75	   ->      75	
+                   / 	            \	
+                  10                 25
+                                     /
+		                   10
+*/
 TEST_CASE("Inserting", "[irch]") {
 	Treap<int> testTreap;
 	testTreap.Insert(10);
@@ -70,7 +141,9 @@ TEST_CASE("Inserting", "[irch]") {
    	REQUIRE(testTreap.Search(10) != nullptr);
    }
 
-
+/*
+      nullptr  ->    10    ->    nullptr
+*/
 
   TEST_CASE("remove root", "[irch]") {
 	Treap<int> testTreap;
@@ -80,15 +153,27 @@ TEST_CASE("Inserting", "[irch]") {
 	REQUIRE(testTreap.getRoot() == nullptr);
 	REQUIRE(testTreap.getCount() == 0);
 }
-
+/*
+if "10" priority > "11" priority
+    10     ->      10	   ->   10	
+                     \ 	
+                      11
+else 
+    10     ->       11     ->    11
+    		   /
+		  10
+*/
   TEST_CASE("remove list", "[irch]") {
 	Treap<int> testTreap;
 	testTreap.Insert(10);
 	testTreap.Insert(11);
 	testTreap.Remove(10);
-	REQUIRE(*testTreap.getKeyRoot() == 11);
-	REQUIRE(testTreap.getRightKey(11) == nullptr);
-	REQUIRE(testTreap.getLeftKey(11) == nullptr);
+	int root = 10;
+	if(*testTreap.getPriority(10) < *testTreap.getPriority(11))
+       		root = 11;
+	REQUIRE(*testTreap.getKeyRoot() == root);
+	REQUIRE(testTreap.getRightKey(root) == nullptr);
+	REQUIRE(testTreap.getLeftKey(root) == nullptr);
 	REQUIRE(testTreap.getRoot() != nullptr);
 	REQUIRE(testTreap.getCount() == 1);
 }
