@@ -167,10 +167,15 @@ else
 	Treap<int> testTreap;
 	testTreap.Insert(10);
 	testTreap.Insert(11);
-	testTreap.Remove(10);
-	int root = 10;
-	if(*testTreap.getPriority(10) < *testTreap.getPriority(11))
-       		root = 11;
+	
+	int removing = 10;
+	int root = 11;
+	if(*testTreap.getPriority(10) > *testTreap.getPriority(11))
+	{
+		removing = 11;
+		root = 10;
+	}
+	testTreap.Remove(removing);
 	REQUIRE(*testTreap.getKeyRoot() == root);
 	REQUIRE(testTreap.getRightKey(root) == nullptr);
 	REQUIRE(testTreap.getLeftKey(root) == nullptr);
