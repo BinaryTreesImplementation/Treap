@@ -6,17 +6,22 @@ HunterGate(
     SHA1 "57d07480686f82ddc916a5980b4f2a18e5954c2b"
 )
 
-project(splay)
+project(Treap)
+set(TREAP_VERSION_MAJOR 0)
+set(TREAP_VERSION_MINOR 1)
+set(TREAP_VERSION_PATCH 0)
+set(TREAP_VERSION_TWEAK 0)
+set(TREAP_VERSION ${TREAP_VERSION_MAJOR}.${TREAP_VERSION_MINOR}.${TREAP_VERSION_PATCH}.${TREAP_VERSION_TWEAK})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(BUILD_TESTS "Build tests" OFF)
 option(BUILD_EXAMPLES "Build Examples" OFF)
-
 add_library(${PROJECT_NAME} INTERFACE)
-target_sources(${PROJECT_NAME} INTERFACE "${PROJECT_SOURCE_DIR}/include/treap.h")
-
-target_include_directories(${PROJECT_NAME} INTERFACE "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(${PROJECT_NAME} INTERFACE 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
+    $<INSTALL_INTERFACE:include>
+)
 
 if(BUILD_TESTS)
   hunter_add_package(Catch)
@@ -44,3 +49,14 @@ if(BUILD_EXAMPLES)
                 )
     endforeach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
 endif()
+
+install(TARGETS Treap
+    EXPORT Treap-config
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+install(EXPORT Treap-config DESTINATION cmake)
+
+include(CPackConfig.cmake)
