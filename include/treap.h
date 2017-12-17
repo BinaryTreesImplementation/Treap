@@ -181,7 +181,7 @@ public:
 		return nullptr;
 	}
 
-	Node *getRoot()const
+	Node *getRoot()
 	{
 		return root;
 	}
