@@ -17,32 +17,43 @@ private:
 
 	} *root;
 	size_t count;
-	void deleteNode_(Node* temp)
-	{
-		if (!temp)
-			return;
-		if (temp->left)
-		{
-			deleteNode_(temp->left);
-			temp->left = nullptr;
-		}
-
-		if (temp->right)
-		{
-			deleteNode_(temp->right);
-			temp->right = nullptr;
-		}
-		delete temp;
-	}
+	
 
 public:
 	typedef std::pair<Node *, Node *> NodePair;
 
 	Treap() : root(nullptr), count(0){}
 	
-	~Treap()
-	{ deleteNode_(root); }
+	void deleteNode(Node* temp)
+	{
+		if (temp != nullptr)
+		{
+			deleteNode(temp->left);
+			deleteNode(temp->right);
+			delete temp;
+			--count;
+		}
+		if (count == 0)
+			root = nullptr;
+	}
 
+	~Treap()
+	{
+		deleteNode(root);
+	}
+	
+	Treap(const Treap& obj)
+	{
+		this->root = _copyNode(obj.root);
+	}
+
+	Treap& operator=(const Treap& obj)
+	{
+		if (this->root != obj.root)
+			this->root = _copyNode(obj.root);
+		return *this;
+	}
+	
 	NodePair Split(const T& value, Node *localRoot)
 	{
 		if (!localRoot)
