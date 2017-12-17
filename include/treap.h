@@ -18,6 +18,15 @@ private:
 	} *root;
 	size_t count;
 	
+	Node *_copyNode(Node *copy)
+	{
+		if (copy == nullptr)
+			return nullptr;
+		Node *copiedNode = new Node(copy->key);
+		copiedNode->left = _copyNode(copy->left);
+		copiedNode->right = _copyNode(copy->right);
+		return copiedNode;
+	}
 
 public:
 	typedef std::pair<Node *, Node *> NodePair;
