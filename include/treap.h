@@ -45,12 +45,16 @@ public:
 	Treap(const Treap& obj)
 	{
 		this->root = _copyNode(obj.root);
+		count = obj.count;
 	}
 
 	Treap& operator=(const Treap& obj)
 	{
 		if (this->root != obj.root)
+		{
 			this->root = _copyNode(obj.root);
+			count = obj.count;
+		}
 		return *this;
 	}
 	
