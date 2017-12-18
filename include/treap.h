@@ -1,11 +1,21 @@
 #include <iostream>
 #include <utility>
 
+
+class Counter
+{
+protected:
+	size_t& Count() { static size_t counter = 0; return counter; }
+public:
+	Counter() { ++Count(); }
+	~Counter() { --Count(); }
+};
+
 template<typename T>
 class Treap
 {
 private:
-	class Node
+	class Node: public Counter
 	{
 	public:
 		Node *left, *right;
@@ -13,25 +23,18 @@ private:
 		int priority;
 
 		Node(const T& _key, const int& _priority, Node *_left = nullptr, Node *_right = nullptr) : key(_key), left(_left), right(_right), priority(_priority) {}
-
-
+		size_t getCounter()
+		{
+			return Count();
+		}
+		
 	} *root;
-	size_t count;
 	
-	Node *_copyNode(Node *copy)
-	{
-		if (copy == nullptr)
-			return nullptr;
-		Node *copiedNode = new Node(copy->key);
-		copiedNode->left = _copyNode(copy->left);
-		copiedNode->right = _copyNode(copy->right);
-		return copiedNode;
-	}
 
 public:
 	typedef std::pair<Node *, Node *> NodePair;
 
-	Treap() : root(nullptr), count(0){}
+	Treap() : root(nullptr) {}
 	
 	void deleteNode(Node* temp)
 	{
@@ -42,7 +45,7 @@ public:
 			delete temp;
 			--count;
 		}
-		if (count == 0)
+		if (root->getCounter() == 0)
 			root = nullptr;
 	}
 
@@ -50,23 +53,7 @@ public:
 	{
 		deleteNode(root);
 	}
-	
-	Treap(const Treap& obj)
-	{
-		this->root = _copyNode(obj.root);
-		count = obj.count;
-	}
-
-	Treap& operator=(const Treap& obj)
-	{
-		if (this->root != obj.root)
-		{
-			this->root = _copyNode(obj.root);
-			count = obj.count;
-		}
-		return *this;
-	}
-	
+		
 	NodePair Split(const T& value, Node *localRoot)
 	{
 		if (!localRoot)
@@ -125,7 +112,6 @@ public:
 		Node *inserting = new Node(value, rand()%100);
 		splited.first = Merge(splited.first, inserting);
 		root = Merge(splited.first, splited.second);
-		++count;
 	}
 
 	
@@ -169,7 +155,6 @@ public:
 			if (preRemoving != nullptr)
 				preRemoving->left = nextRemoving;
 			root = Merge(splited.first, splited.second);
-			--count;
 		}
 	}
 
@@ -223,6 +208,6 @@ public:
 
 	size_t getCount()
 	{
-		return count;
+		return root->getCounter();
 	}
 };
