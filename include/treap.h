@@ -43,7 +43,6 @@ public:
 			deleteNode(temp->left);
 			deleteNode(temp->right);
 			delete temp;
-			--count;
 		}
 		if (root->getCounter() == 0)
 			root = nullptr;
