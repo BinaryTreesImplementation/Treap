@@ -1,6 +1,5 @@
 #include <iostream>
 #include <utility>
-
 #ifndef Counter
 class Counter
 {
@@ -12,15 +11,6 @@ public:
 	~Counter() { --Count(); }
 };
 #endif
-class Counter
-{
-protected:
-	size_t& Count() { static size_t counter = 0; return counter; }
-public:
-	Counter() { ++Count(); }
-	~Counter() { --Count(); }
-};
-
 template<typename T>
 class Treap
 {
